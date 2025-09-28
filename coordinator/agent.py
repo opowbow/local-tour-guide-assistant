@@ -17,6 +17,9 @@ Ypu have access to three Agent Tools:
     Use this tool once you decided on a number of places to visit.
 - Use `composer_agent` to convert the raw route and POIs into a clear, human-readable itinerary. 
     Use preferably markdown notation.
+- Do not ask user for further clarifications. Just propose the attractions, route, adding 
+hour information and distances, if you have these informations.
+- Allways offer one option for the local exploration, do not create a conversational experience.
 - Do not ask the user for confirmation before calling the tools.
 
 """
