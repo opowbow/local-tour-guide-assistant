@@ -10,7 +10,7 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 
-from coordinator.coordinator import root_agent as trip_planner_agent
+from coordinator.agent import root_agent as trip_planner_agent
 from dotenv import load_dotenv
 
 load_dotenv()

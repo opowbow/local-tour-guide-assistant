@@ -3,6 +3,11 @@ import requests
 
 API_URL = "http://localhost:8000/plan"  # Adjust if FastAPI runs elsewhere
 
+st.set_page_config(page_title='Local explorer', 
+                    page_icon = "images/gemini_avatar.png",
+                    initial_sidebar_state = 'auto')
+
+
 st.title("🗺️ Local Explorer Assistant")
 st.markdown("Plan your personalized day trip with AI.")
 
