@@ -24,6 +24,33 @@ SESSION_ID = str(uuid.uuid4())
 
 
 app = FastAPI()
+
+# Define a new input model for location data
+class LocationData(BaseModel):
+    latitude: float
+    longitude: float
+
+@app.post("/discover-location")
+async def discover_location(location: LocationData):
+    """
+    This endpoint receives a user's location, identifies the nearby landmark,
+    and returns interesting facts about it as text and audio.
+    """
+    # The user's query will be the location data
+    user_query = f"Tell me about the building at latitude {location.latitude}, longitude {location.longitude}"
+    
+    # Send the query to the coordinator agent
+    # The coordinator will handle the new workflow
+    response_text = await coordinator.aquery(user_query)
+
+    # Generate audio from the response text
+    # This uses the `generate_audio` tool I have access to.
+    # audio_url = generate_audio(response_text) 
+    
+    return {
+        "text_summary": response_text,
+        # "audio_summary_url": audio_url
+    }
 runner: Runner = None
 
 class TripRequest(BaseModel):
