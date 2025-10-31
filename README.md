@@ -1,5 +1,5 @@
 # Introduction
-The application uses ADK, Gemini, Google Search, and Google Maps APIs to power a local explorer assistant, which make recommendation for a short city visit. The user enters in a minimalistic Streamlit user interface few informations (the city visited, preferences, the time budget (between 1 and 12 hours), and things to avoid. The information is sent to the backend (built with FastAPI) and broadcasted to the coordinator agent for processing and preparing the response. This coordinator agent is using a number of sub-agents (AgentTools), each specialized in one specific task.
+Following on from the oirignal source - https://github.com/gabrielpreda/local-explorer-assistant, this is an extension to the concept of local travle assistamt to incorporate a local tour guide. The agent will details interesting facts about building in the location where the user is. Output can be text or voice. The application uses ADK, Gemini, Google Search, and Google Maps APIs. The user's current GPS will be processed by an identifier agent to identify the landmarks at that location. The information is sent to the discovery agent , which uses google search to find information. The composer agent will be prompted to create a friendly, narrative script. We will then add a step to convert this text into speech using an audio generation tool.
 
 # Architecture
 
