@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 
 API_URL = "http://localhost:8000/plan"  # Adjust if FastAPI runs elsewhere
+DISCOVER_API_URL = "http://localhost:8000/discover-location"
 
 st.set_page_config(page_title='Local explorer', 
                     page_icon = "images/gemini_avatar.png",
@@ -32,6 +33,29 @@ if submitted:
                 itinerary = response.json().get("itinerary", "No response from agent.")
                 st.success("Here's your local exploration plan:")
                 st.markdown(itinerary, unsafe_allow_html=True)
+            else:
+                st.error(f"Error: {response.status_code} - {response.text}")
+        except Exception as e:
+            st.error(f"Request failed: {e}")
+
+st.divider()
+
+st.header("Tour Guide")
+st.markdown("Get interesting facts about a landmark near you.")
+
+if st.button("Tell me about my location"):
+    with st.spinner("Identifying your location and gathering information..."):
+        try:
+            # Using a fixed location for now
+            payload = {
+                "latitude": 41.3874,
+                "longitude": 2.1686
+            }
+            response = requests.post(DISCOVER_API_URL, json=payload)
+            if response.status_code == 200:
+                summary = response.json().get("text_summary", "No summary available.")
+                st.success("Here are some interesting facts:")
+                st.markdown(summary)
             else:
                 st.error(f"Error: {response.status_code} - {response.text}")
         except Exception as e:

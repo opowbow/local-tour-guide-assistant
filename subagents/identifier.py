@@ -1,25 +1,16 @@
-from adk.api.agents import Agent
-from adk.api.tools import Tool, tool
+from google.adk.agents import Agent
+from google.adk.tools import google_search
 
-class IdentifierAgent(Agent):
-    def __init__(self, **kwargs):
-        super().__init__(
-            **kwargs,
-            description="Identifies a landmark or building from GPS coordinates using Google Maps.",
-            # The native google_maps_grounding tool is perfect for this
-            tools=[google_maps_grounding] 
-        )
+instruction_prompt = """
+You are an identifier agent. Your job is to identify the landmark or building at the given GPS coordinates.
+You will be given a latitude and longitude, and you need to return the name of the most prominent landmark at that location.
+Use the google_search tool to find the name of the landmark.
+"""
 
-    @tool(name="IdentifyPlaceFromLocation")
-    def identify_place(self, latitude: float, longitude: float) -> str:
-        """
-        Takes latitude and longitude and returns the name of the place.
-        It uses the google_maps_grounding tool to find nearby places of interest.
-        """
-        # The prompt will instruct the model to use the grounding tool
-        # to find the most prominent landmark at these coordinates.
-        prompt = f"What is the name of the most prominent building or landmark at latitude {latitude}, longitude {longitude}?"
-        
-        # This will invoke the LLM with the Maps tool to find the place name.
-        place_name = self.query(prompt)
-        return place_name
+identifier_agent = Agent(
+    name="identifier_agent",
+    model="gemini-2.5-pro",
+    description="Identifies a landmark or building from GPS coordinates using Google Search.",
+    instruction=instruction_prompt,
+    tools=[google_search]
+)

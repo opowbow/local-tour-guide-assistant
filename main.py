@@ -10,7 +10,7 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 
-from coordinator.agent import root_agent as trip_planner_agent
+from coordinator.agent import root_agent as trip_planner_agent, tour_guide_coordinator
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,12 +36,36 @@ async def discover_location(location: LocationData):
     This endpoint receives a user's location, identifies the nearby landmark,
     and returns interesting facts about it as text and audio.
     """
+    session_service = InMemorySessionService()
+    await session_service.create_session(
+        app_name=APP_NAME,
+        user_id=USER_ID,
+        session_id=SESSION_ID,
+    )
+    runner = Runner(
+        agent=tour_guide_coordinator,
+        app_name=APP_NAME,
+        session_service=session_service,
+    )
     # The user's query will be the location data
     user_query = f"Tell me about the building at latitude {location.latitude}, longitude {location.longitude}"
     
     # Send the query to the coordinator agent
     # The coordinator will handle the new workflow
-    response_text = await coordinator.aquery(user_query)
+    content = Content(role="user", parts=[Part(text=user_query)])
+
+    response_text = ""
+    async for event in runner.run_async(
+        user_id=USER_ID,
+        session_id=SESSION_ID,
+        new_message=content
+    ):
+        if event.is_final_response():
+            if event.content and event.content.parts:
+                response_text += event.content.parts[0].text
+            elif event.actions and event.actions.escalate:
+                response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
+            break
 
     # Generate audio from the response text
     # This uses the `generate_audio` tool I have access to.
